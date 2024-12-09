@@ -1,3 +1,10 @@
+"""
+Copyright (c) 2024-2024 phan-my.
+Copyright (c) 2024-2024 Vlad.
+===============================================================================
+"""
+import microbit
+
 def on_button_pressed_a():
     radio.send_string("start_" + KEY)
 input.on_button_pressed(Button.A, on_button_pressed_a)
