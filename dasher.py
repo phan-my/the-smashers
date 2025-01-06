@@ -18,7 +18,7 @@
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"""
 from microbit import *
 
-# automaton
+# automaton mechanisms
 def on_forever():
     speed = 120
     
@@ -33,16 +33,16 @@ def on_forever():
             100)
         basic.pause(500)
 
-        turn = randint(0, 1)
-        
         # random turn l/r
+        turn = randint(0, 1)
         if turn == 0:
             leftWheel = 0
             rightWheel = speed/4
-        
         if turn == 1:
             leftWheel = 0
-            rightWheel = speed/2
+            rightWheel = speed/4
+
+        # set wheels the random speed
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.LEFT_MOTOR,
             maqueenPlusV2.MyEnumDir.FORWARD, leftWheel)
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.RIGHT_MOTOR,
