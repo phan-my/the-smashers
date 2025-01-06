@@ -6,7 +6,7 @@ The Smashers is a project to produce a fun police-and-thief game. The two Maquee
 ## Installation
 ### Requirements
 * 3x micro:bits
-* 2x Maqueena
+* 2x Maqueens
 
 ### Online
 1. Open https://makecode.microbit.org/ on a Chromium-based browser
