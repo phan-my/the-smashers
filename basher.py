@@ -45,7 +45,7 @@ def on_button_pressed_a():
     global isLeft
     global isDriving
 
-    # flick state of leftward movement upon clicking 
+    # flick state of leftward movement upon clicking
     isLeft = not isLeft
 
     # cannot turn at standstill
@@ -61,7 +61,7 @@ def on_button_pressed_a():
         else:
             signal = NO_LEFT
         
-        # send 
+        # send
         radio.send_string(signal)
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
@@ -184,6 +184,10 @@ def on_forever():
     # give Dasher distance from the Basher
     # thanks to https://wiki.dfrobot.com/micro_Maqueen_for_micro_bit_SKU_ROB0148-EN
     # and https://makecode.microbit.org/reference/radio/received-signal-strength
-    distanceToDasher = maqueenPlusV2.read_ultrasonic(DigitalPin.P13, DigitalPin.P14)
-    radio.send_number(int(distanceToDasher))
+    
+    CODE = 0xe132
+
+    # provide the dasher the proximity
+    # stop dasher if too close
+    radio.send_number(CODE)
 basic.forever(on_forever)
