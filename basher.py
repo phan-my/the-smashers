@@ -37,27 +37,31 @@ isRight = False
 isDriving = False
 direction = 1
 
+# send remote control signals
 signal = ""
 
-# send remote control signals
 # `a` to turn left
 def on_button_pressed_a():
     global isLeft
     global isDriving
 
-    # flick leftward movement or lack thereof
+    # flick state of leftward movement upon clicking 
     isLeft = not isLeft
 
     # cannot turn at standstill
     if isDriving == True:
         # set signal as approprite
+        # set start turning
         if isLeft:
             signal = LEFT
 
             # stop rightward movement
             radio.send_string(NO_RIGHT)
+        # stop turning
         else:
             signal = NO_LEFT
+        
+        # send 
         radio.send_string(signal)
 input.on_button_pressed(Button.A, on_button_pressed_a)
 
@@ -66,44 +70,54 @@ def on_button_pressed_b():
     global isRight
     global isDriving
 
-    # flick rightward movement or lackthereof
+    # flick state of rightward movement upon clicking
     isRight = not isRight
 
     # cannot turn at standstill
     if isDriving == True:
         # set signal as approprite
+        # start turning
         if isRight:
             signal = RIGHT
 
             # stop leftward movement
             radio.send_string(NO_LEFT)
+        # stop turning
         else:
             signal = NO_RIGHT
+
+        # send
         radio.send_string(signal)
 input.on_button_pressed(Button.B, on_button_pressed_b)
 
 # timing for double tap
 interval_ms = input.running_time()
 
-# single-tap `a + b` to stop
+# single-tap `a + b` to start/stop
 def on_button_pressed_ab():
     global interval_ms
     global isDriving
     global direction
     isDriving = not isDriving
-    inInterval = input.running_time() - interval_ms < 500
 
-    # double-tap `a + b` within 1 s to reverse
+    # double-tap `a + b` within 500 ms to reverse direction
+    inInterval = input.running_time() - interval_ms < 500
+    
     if inInterval:
         direction = -direction
+
+    # stop
     if not isDriving:
         radio.send_string(STOP)
+    
+    # start engine in determined direction
     if isDriving:
         if direction == -1:
             radio.send_string(BACK)
         if direction == 1:
             radio.send_string(START)
-        
+
+    # update timestamp of previous a + b
     interval_ms = input.running_time()
 input.on_button_pressed(Button.AB, on_button_pressed_ab)
 
@@ -113,6 +127,7 @@ speed = 100
 def on_received_string(receivedString):
     global direction
     # set motors as approprite
+    # start engine in given direction
     if receivedString == START:
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.ALL_MOTOR,
             maqueenPlusV2.MyEnumDir.FORWARD,
@@ -121,6 +136,7 @@ def on_received_string(receivedString):
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.ALL_MOTOR,
             maqueenPlusV2.MyEnumDir.BACKWARD,
             direction*speed)
+    # turning
     if receivedString == LEFT:
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.LEFT_MOTOR,
             maqueenPlusV2.MyEnumDir.FORWARD,
@@ -137,6 +153,8 @@ def on_received_string(receivedString):
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.RIGHT_MOTOR,
             maqueenPlusV2.MyEnumDir.FORWARD,
             direction*speed)
+
+    # halt
     if receivedString == STOP:
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.ALL_MOTOR,
             maqueenPlusV2.MyEnumDir.FORWARD,
@@ -147,8 +165,11 @@ def on_received_string(receivedString):
 radio.on_received_string(on_received_string)
 
 distanceToDasher = None
+
 def on_forever():
     global distanceToDasher
+
+    # emergency lights
     for i in range(4):
         maqueenPlusV2.set_index_color(DigitalPin.P15,
             i,
@@ -160,6 +181,7 @@ def on_forever():
             maqueenPlusV2.rgb(0, 0, 100))
     basic.pause(1000)
 
+    # give Dasher distance from the Basher
     # thanks to https://wiki.dfrobot.com/micro_Maqueen_for_micro_bit_SKU_ROB0148-EN
     # and https://makecode.microbit.org/reference/radio/received-signal-strength
     distanceToDasher = maqueenPlusV2.read_ultrasonic(DigitalPin.P13, DigitalPin.P14)
