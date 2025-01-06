@@ -1,5 +1,5 @@
 """# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
- # basher.py.
+ # dasher.py is an autonomous Maqueen(TM) that avoids obstacles.
  # Copyright (C) 2024-2025 phan-my.
  # Copyright (C) 2024-2025 Vlad.
  #
@@ -16,12 +16,18 @@
  # You should have received a copy of the GNU General Public License
  # along with this program.  If not, see <https://www.gnu.org/licenses/>.
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #"""
+from microbit import *
+
+# automaton
 def on_forever():
     speed = 120
+    
     untilCollision_cm = maqueenPlusV2.read_ultrasonic(DigitalPin.P13,
         DigitalPin.P14)
 
-    if maqueenPlusV2.read_ultrasonic(DigitalPin.P13, DigitalPin.P14) < 10:
+    # reverse and turn if too close to wall
+    if untilCollision_cm < 10:
+        # reverse
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.ALL_MOTOR,
             maqueenPlusV2.MyEnumDir.BACKWARD,
             100)
@@ -29,6 +35,7 @@ def on_forever():
 
         turn = randint(0, 1)
         
+        # random turn l/r
         if turn == 0:
             leftWheel = 0
             rightWheel = speed/4
@@ -42,39 +49,19 @@ def on_forever():
             maqueenPlusV2.MyEnumDir.FORWARD, rightWheel)
         basic.pause(randint(250, 500))
     else:
+        # default straightforward movement
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.ALL_MOTOR,
             maqueenPlusV2.MyEnumDir.FORWARD, speed)
 basic.forever(on_forever)
 
-"""
-distance = 0
+CODE = 0xe132
 
-def on_forever():
-
-global distance
-
-radio.send_number(0)
-
-pins.digital_write_pin(DigitalPin.P0, 0)
-
-control.wait_micros(2)
-
-pins.digital_write_pin(DigitalPin.P0, 1)
-
-control.wait_micros(10)
-
-pins.digital_write_pin(DigitalPin.P0, 0)
-
-distance = Math.idiv(pins.pulse_in(DigitalPin.P11, PulseValue.HIGH), 58)
-
-basic.show_number(distance)
-
-basic.pause(100)
-
-distance = radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH)
-
-basic.show_number(distance)
-
-basic.forever(on_forever)
-
-"""
+# pause if basher is too close to dasher
+def on_received_number(receivedNumber):
+    if receivedNumber == CODE:
+        if radio.received_packet(RadioPacketProperty.SIGNAL_STRENGTH) > -100:
+            maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.ALL_MOTOR,
+                maqueenPlusV2.MyEnumDir.FORWARD,
+                0)
+            basic.pause(5000)
+radio.on_received_number(on_received_number)
