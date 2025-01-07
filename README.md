@@ -22,4 +22,4 @@ The Basher is a police robot. Its main task is to catch the Dasher. The only pos
 The Basher has been configured to be controlled with one remote micro:bit. Controls are like instruments: they are cumbersome at first but become easier over time. Press `a + b` to start/stop. If you press `a + b` quickly, you'll go in reverse. While driving forward, press `a` to make a left turn, `b` to make a right turn.
 
 ## The Dasher
-The Dasher is a thief robot that is trying to run away from the Basher. It is controlled, so it cannot be controlled by a player. The directions that it chooses are random and independet. It is able to see that barriers and to avoid them successfully.
+The Dasher is a thief robot that runs away from the Basher. It is autonomous, so it cannot be controlled by a player. The directions that it chooses are random. It is able to see that barriers and to avoid them successfully.
