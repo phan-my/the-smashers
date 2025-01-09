@@ -39,8 +39,8 @@ def on_forever():
             leftWheel = 0
             rightWheel = speed/4
         if turn == 1:
-            leftWheel = 0
-            rightWheel = speed/4
+            leftWheel = speed/4
+            rightWheel = 0
 
         # set wheels the random speed
         maqueenPlusV2.control_motor(maqueenPlusV2.MyEnumMotor.LEFT_MOTOR,
